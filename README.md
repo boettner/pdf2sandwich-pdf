@@ -2,12 +2,6 @@
 ## Usage
     ./pdf2sandwich-pdf.sh <file.pdf>
 
-## Todo
-
-- backup optional
-- declare dependencies
-- check if dependencies are installed
-
 ## Credits
 Inspired by
 
