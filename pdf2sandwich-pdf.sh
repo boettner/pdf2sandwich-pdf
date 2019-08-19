@@ -4,6 +4,11 @@ PDFFILE=$1
 LANG=deu        # See man tesseract > LANGUAGES
 MIN_WORDS=5     # Number of words required to accept pdftotext result.
 
+if [[ -z "$PDFFILE" ]]; then
+	echo "syntax: $(basename $0) <INPUT PDF>"
+	exit 1
+fi
+
 # Check if pdf already has embedded text.
 pdftotext "$PDFFILE" "/tmp/temp.txt"
 FILESIZE=$(wc -w < "/tmp/temp.txt")
