@@ -12,7 +12,7 @@ rm /tmp/temp.txt
 # If that fails, try Tesseract.
 if [[ $FILESIZE -lt $MIN_WORDS ]]
 then
-    echo -n "Attempting OCR extraction...\n"
+    echo "Attempting OCR extraction..."
 
     # backup original pdf file
     cp -a $PDFFILE $PDFFILE.bck
@@ -26,7 +26,7 @@ then
     # We don't need then intermediate TIFF file, so discard it.
     rm /tmp/temp.tiff
 
-    echo -n "PDF successfully sandwiched! \O/ \n"
+    echo "PDF successfully sandwiched! \O/"
 else
-    echo -n "pdftotext extracted $FILESIZE words. Skip OCR process.\n"
+    echo "pdftotext extracted $FILESIZE words. Skip OCR process."
 fi
