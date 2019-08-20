@@ -1,8 +1,14 @@
 #!/bin/bash
+function check_dependencies {
+    command -v convert >/dev/null 2>&1 || { echo >&2 "No 'pdftotext' installed. On most Linux distributions, pdftotext is part of 'poppler-utils' package."; exit 1; }
+    command -v tesseract >/dev/null 2>&1 || { echo >&2 "No 'tesseract' installed. Install 'tesseract-ocr' package."; exit 1; }
+}
 
 PDFFILE=$1
 LANG=deu        # See man tesseract > LANGUAGES
 MIN_WORDS=5     # Number of words required to accept pdftotext result.
+
+check_dependencies
 
 PREV_IFS=$IFS
 IFS='\0'
