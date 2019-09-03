@@ -33,11 +33,8 @@ if [[ $WORDCOUNT -lt $MIN_WORDS ]]
 then
     echo "Attempting OCR extraction..."
 
-    # backup original pdf file
-    cp -a "$PDFFILE" "$PDFFILE.bck"
-
-    # Use imagemagick to convert the PDF to a high-rest multi-page TIFF.
-    convert -density 300 "$PDFFILE" -depth 8 -strip -background white -alpha off /tmp/temp.tiff
+	# Use imagemagick to convert the PDF to a high-rest multi-page TIFF.
+	convert -density 300 "$PDFFILE" -depth 8 -strip -background white -alpha off /tmp/temp.tiff
 
 	FILE_BASENAME=$(dirname "$PDFFILE")/$(basename "$PDFFILE" .pdf)
 
