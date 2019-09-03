@@ -1,7 +1,14 @@
 #!/bin/bash
 function check_dependencies {
-    command -v convert >/dev/null 2>&1 || { echo >&2 "No 'pdftotext' installed. On most Linux distributions, pdftotext is part of 'poppler-utils' package."; exit 1; }
-    command -v tesseract >/dev/null 2>&1 || { echo >&2 "No 'tesseract' installed. Install 'tesseract-ocr' package."; exit 1; }
+	command -v convert >/dev/null 2>&1 || { echo >&2 "No 'pdftotext' installed. On most Linux distributions, pdftotext is part of 'poppler-utils' package."; exit 1; }
+	command -v tesseract >/dev/null 2>&1 || { echo >&2 "No 'tesseract' installed. Install 'tesseract-ocr' package."; exit 1; }
+}
+
+function count_words_in_pdf {
+	pdftotext "$PDFFILE" "/tmp/temp.txt"
+	local AMOUNT_OF_WORDS=$(wc -w < "/tmp/temp.txt")
+	rm /tmp/temp.txt
+	echo "$AMOUNT_OF_WORDS"
 }
 
 PDFFILE=$1
@@ -19,12 +26,10 @@ if [[ -z "$PDFFILE" ]]; then
 fi
 
 # Check if pdf already has embedded text.
-pdftotext "$PDFFILE" "/tmp/temp.txt"
-FILESIZE=$(wc -w < "/tmp/temp.txt")
-rm /tmp/temp.txt
+WORDCOUNT=$(count_words_in_pdf $PDFFILE)
 
 # If that fails, try Tesseract.
-if [[ $FILESIZE -lt $MIN_WORDS ]]
+if [[ $WORDCOUNT -lt $MIN_WORDS ]]
 then
     echo "Attempting OCR extraction..."
 
@@ -42,9 +47,11 @@ then
     # We don't need then intermediate TIFF file, so discard it.
     rm /tmp/temp.tiff
 
-    echo "PDF successfully sandwiched! \O/"
+	WORDCOUNT=$(count_words_in_pdf $PDFFILE)
+
+	echo "$WORDCOUNT words in new sandwiched pdf \O/"
 else
-    echo "pdftotext extracted $FILESIZE words. Skip OCR process."
+	echo "pdftotext extracted $WORDCOUNT words. Skip OCR process."
 fi
 
 IFS=$PREV_IFS
