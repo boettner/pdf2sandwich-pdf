@@ -1,6 +1,6 @@
 # pdf2sandwich-pdf
 ## Usage
-    ./pdf2sandwich-pdf.sh <file.pdf>
+    ./pdf2sandwich-pdf <file.pdf>
 
 ## Credits
 Inspired by
