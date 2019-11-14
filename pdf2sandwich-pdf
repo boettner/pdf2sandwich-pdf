@@ -5,13 +5,13 @@ function check_dependencies {
 }
 
 function count_words_in_pdf {
-	pdftotext "$PDFFILE" "/tmp/temp.txt"
+	pdftotext "$PDFINFILE" "/tmp/temp.txt"
 	local AMOUNT_OF_WORDS=$(wc -w < "/tmp/temp.txt")
 	rm /tmp/temp.txt
 	echo "$AMOUNT_OF_WORDS"
 }
 
-PDFFILE=$1
+PDFINFILE=$1
 LANG=deu	# See man tesseract > LANGUAGES
 MIN_WORDS=5	# Number of words required to accept pdftotext result.
 
@@ -20,13 +20,13 @@ check_dependencies
 PREV_IFS=$IFS
 IFS='\0'
 
-if [[ -z "$PDFFILE" ]]; then
+if [[ -z "$PDFINFILE" ]]; then
 	echo "syntax: $(basename $0) <INPUT PDF>"
 	exit 1
 fi
 
 # Check if pdf already has embedded text.
-WORDCOUNT=$(count_words_in_pdf $PDFFILE)
+WORDCOUNT=$(count_words_in_pdf $PDFINFILE)
 
 # If that fails, try Tesseract.
 if [[ $WORDCOUNT -lt $MIN_WORDS ]]
@@ -34,9 +34,9 @@ then
 	echo "Attempting OCR extraction..."
 
 	# Use imagemagick to convert the PDF to a high-rest multi-page TIFF.
-	convert -density 300 "$PDFFILE" -depth 8 -strip -background white -alpha off /tmp/temp.tiff
+	convert -density 300 "$PDFINFILE" -depth 8 -strip -background white -alpha off /tmp/temp.tiff
 
-	FILE_BASENAME=$(dirname "$PDFFILE")/$(basename "$PDFFILE" .pdf)
+	FILE_BASENAME=$(dirname "$PDFINFILE")/$(basename "$PDFINFILE" .pdf)
 
 	# Then use Tesseract to perform OCR on the tiff.
 	tesseract /tmp/temp.tiff "$FILE_BASENAME" -l $LANG pdf
@@ -44,7 +44,7 @@ then
 	# We don't need then intermediate TIFF file, so discard it.
 	rm /tmp/temp.tiff
 
-	WORDCOUNT=$(count_words_in_pdf $PDFFILE)
+	WORDCOUNT=$(count_words_in_pdf $PDFINFILE)
 
 	echo "$WORDCOUNT words in new sandwiched pdf \O/"
 else
